@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.Encoder;
@@ -41,6 +42,10 @@ public class Drivetrain extends SubsystemBase {
   // Set up the BuiltInAccelerometer
   private final BuiltInAccelerometer m_accelerometer = new BuiltInAccelerometer();
 
+  // Set up PIDController for velocity control
+  private final PIDController m_velocityPIDController =
+    new PIDController(0.5, 0.0, 0.0); // P=0.5, I=0.0, D=0.0
+
   /** Creates a new Drivetrain. */
   public Drivetrain() {
     SendableRegistry.addChild(m_diffDrive, m_leftMotor);
@@ -65,6 +70,16 @@ public class Drivetrain extends SubsystemBase {
     double xaxisSpeed = (xaxisVelocity + Math.signum(xaxisVelocity) * 15.0) / 41.5;
 
     m_diffDrive.arcadeDrive(xaxisSpeed, zaxisRotate);
+  }
+
+  public void arcadeDrivePIDVelocity(double xaxisVelocity, double zaxisRotate) {
+    double xaxisSpeed = m_velocityPIDController.calculate(getAverageVelocity(), xaxisVelocity);
+
+    m_diffDrive.arcadeDrive(xaxisSpeed, zaxisRotate);
+  }
+
+  public double getAverageVelocity() {
+    return (m_leftEncoder.getRate() + m_rightEncoder.getRate()) / 2.0;
   }
 
   public void resetEncoders() {
