@@ -19,6 +19,7 @@ public class Drivetrain extends SubsystemBase {
   private static final double kCountsPerMotorShaftRev = 12.0;
   private static final double kCountsPerRevolution = kCountsPerMotorShaftRev * kGearRatio; // 585.0
   private static final double kWheelDiameterInch = 2.3622; // 60 mm
+  private static final double kMaxSpeed = 28.5; // inches per second
 
   // The XRP has the left and right motors set to
   // channels 0 and 1 respectively
@@ -57,6 +58,12 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void arcadeDrive(double xaxisSpeed, double zaxisRotate) {
+    m_diffDrive.arcadeDrive(xaxisSpeed, zaxisRotate);
+  }
+
+  public void arcadeDriveVelocity(double xaxisVelocity, double zaxisRotate) {
+    double xaxisSpeed = (xaxisVelocity + Math.signum(xaxisVelocity) * 15.0) / 41.5;
+
     m_diffDrive.arcadeDrive(xaxisSpeed, zaxisRotate);
   }
 

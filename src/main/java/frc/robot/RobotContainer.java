@@ -13,6 +13,7 @@ import frc.robot.commands.AutonomousDistance;
 import frc.robot.commands.AutonomousTime;
 import frc.robot.commands.DriveTest;
 import frc.robot.commands.DriveTime;
+import frc.robot.commands.DriveVelocityTest;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -46,6 +47,7 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure preferences
     Preferences.setDouble("Test Speed", -0.5);
+    Preferences.setDouble("Test Velocity", -10.0);
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -83,6 +85,7 @@ public class RobotContainer {
     SmartDashboard.putData(m_chooser);
 
     SmartDashboard.putData("Drive Test", new DriveTest(()-> Preferences.getDouble("Test Speed", -0.5), m_drivetrain));
+    SmartDashboard.putData("Drive Velocity Test", new DriveVelocityTest(()-> Preferences.getDouble("Test Velocity", -10.0), m_drivetrain));
   }
 
   /**
