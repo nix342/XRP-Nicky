@@ -50,7 +50,7 @@ public class Drivetrain extends SubsystemBase {
   private final PIDController m_headingPIDController =
   new PIDController(0.01, 0.0, 0.0); // P=0.5, I=0.0, D=0.0
 
-  private boolean steering = false;
+  private boolean steering = true;
   private double targetHeading;
 
   /** Creates a new Drivetrain. */
@@ -67,6 +67,7 @@ public class Drivetrain extends SubsystemBase {
     m_leftEncoder.setDistancePerPulse((Math.PI * kWheelDiameterInch) / kCountsPerRevolution);
     m_rightEncoder.setDistancePerPulse((Math.PI * kWheelDiameterInch) / kCountsPerRevolution);
     resetEncoders();
+    resetGyro();
   }
 
   public void arcadeDrive(double xaxisSpeed, double zaxisRotate) {
@@ -89,11 +90,9 @@ public class Drivetrain extends SubsystemBase {
       steering = false;
     } else if(!steering && zaxisRotate != 0.0) {
       steering = true;
-    } else {
-      steering = false;
-    }
-
-    zaxisRotate -= m_headingPIDController.calculate(getGyroAngleZ(), targetHeading);
+    } else if(!steering) {
+      zaxisRotate += m_headingPIDController.calculate(getGyroAngleZ(), targetHeading);
+    } 
 
     m_diffDrive.arcadeDrive(xaxisSpeed, zaxisRotate);
   }
@@ -193,5 +192,9 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("Left Distance", getLeftDistanceInch());
     SmartDashboard.putNumber("Right Speed", m_rightEncoder.getRate());
     SmartDashboard.putNumber("Right Distance", getRightDistanceInch());
+
+    SmartDashboard.putNumber("Gyro X", getGyroAngleX());
+    SmartDashboard.putNumber("Gyro Y", getGyroAngleY());
+    SmartDashboard.putNumber("Gyro Z", getGyroAngleZ());
   }
 }
