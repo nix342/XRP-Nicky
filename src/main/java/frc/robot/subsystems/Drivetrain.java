@@ -48,7 +48,7 @@ public class Drivetrain extends SubsystemBase {
 
     // Set up PIDController for heading control
   private final PIDController m_headingPIDController =
-  new PIDController(0.01, 0.0, 0.0); // P=0.5, I=0.0, D=0.0
+  new PIDController(0.2, 0.0, 0.0); // P=0.5, I=0.0, D=0.0
 
   private boolean steering = true;
   private double targetHeading;
