@@ -44,7 +44,14 @@ public class Drivetrain extends SubsystemBase {
 
   // Set up PIDController for velocity control
   private final PIDController m_velocityPIDController =
-    new PIDController(0.5, 0.0, 0.0); // P=0.5, I=0.0, D=0.0
+    new PIDController(0.1, 0.0, 0.0); // P=0.5, I=0.0, D=0.0
+
+    // Set up PIDController for heading control
+  private final PIDController m_headingPIDController =
+  new PIDController(0.01, 0.0, 0.0); // P=0.5, I=0.0, D=0.0
+
+  private boolean steering = true;
+  private double targetHeading;
 
   /** Creates a new Drivetrain. */
   public Drivetrain() {
@@ -60,6 +67,7 @@ public class Drivetrain extends SubsystemBase {
     m_leftEncoder.setDistancePerPulse((Math.PI * kWheelDiameterInch) / kCountsPerRevolution);
     m_rightEncoder.setDistancePerPulse((Math.PI * kWheelDiameterInch) / kCountsPerRevolution);
     resetEncoders();
+    resetGyro();
   }
 
   public void arcadeDrive(double xaxisSpeed, double zaxisRotate) {
@@ -73,7 +81,18 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void arcadeDrivePIDVelocity(double xaxisVelocity, double zaxisRotate) {
-    double xaxisSpeed = m_velocityPIDController.calculate(getAverageVelocity(), xaxisVelocity);
+    double xaxisSpeed = (xaxisVelocity + Math.signum(xaxisVelocity) * 15.0) / 41.5 
+    + m_velocityPIDController.calculate(getAverageVelocity(), xaxisVelocity);
+
+    if(steering && zaxisRotate == 0.0) {
+      targetHeading = getGyroAngleZ();
+      m_headingPIDController.reset();
+      steering = false;
+    } else if(!steering && zaxisRotate != 0.0) {
+      steering = true;
+    } else if(!steering) {
+      zaxisRotate += m_headingPIDController.calculate(getGyroAngleZ(), targetHeading);
+    } 
 
     m_diffDrive.arcadeDrive(xaxisSpeed, zaxisRotate);
   }
@@ -173,5 +192,9 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("Left Distance", getLeftDistanceInch());
     SmartDashboard.putNumber("Right Speed", m_rightEncoder.getRate());
     SmartDashboard.putNumber("Right Distance", getRightDistanceInch());
+
+    SmartDashboard.putNumber("Gyro X", getGyroAngleX());
+    SmartDashboard.putNumber("Gyro Y", getGyroAngleY());
+    SmartDashboard.putNumber("Gyro Z", getGyroAngleZ());
   }
 }
