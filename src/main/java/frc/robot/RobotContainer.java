@@ -12,6 +12,7 @@ import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.AutonomousDistance;
 import frc.robot.commands.AutonomousTime;
 import frc.robot.commands.DriveTest;
+import frc.robot.commands.DriveTrapezoid;
 import frc.robot.commands.DriveVelocityTest;
 import frc.robot.commands.DrivePIDTest;
 import frc.robot.subsystems.Arm;
@@ -87,6 +88,7 @@ public class RobotContainer {
     SmartDashboard.putData("Drive Test", new DriveTest(()-> Preferences.getDouble("Test Speed", -0.5), m_drivetrain));
     SmartDashboard.putData("Drive Velocity Test", new DriveVelocityTest(()-> Preferences.getDouble("Test Velocity", -10.0), m_drivetrain));
     SmartDashboard.putData("Drive PID Test", new DrivePIDTest(()-> Preferences.getDouble("Test Velocity", -10.0), m_drivetrain));
+    SmartDashboard.putData("Drive Trapezoid", new DriveTrapezoid(15.0, m_drivetrain));
   }
 
   /**
