@@ -90,8 +90,10 @@ public class Drivetrain extends SubsystemBase {
       steering = false;
     } else if(!steering && zaxisRotate != 0.0) {
       steering = true;
-    } else if(!steering) {
-      zaxisRotate += m_headingPIDController.calculate(getGyroAngleZ(), targetHeading);
+    } 
+    
+    if(!steering) {
+      zaxisRotate = m_headingPIDController.calculate(getGyroAngleZ(), targetHeading);
     } 
 
     m_diffDrive.arcadeDrive(xaxisSpeed, zaxisRotate);
